@@ -13,7 +13,6 @@ const Asm = () => {
                 <Stacks.Screen name="Authen" component={StackAuthen} />
                 <Stacks.Screen name="Main" component={MainTabNavigator} />
             </Stacks.Navigator>
-            <Text></Text>
         </NavigationContainer>
     )
 }
