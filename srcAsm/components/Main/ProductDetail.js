@@ -1,14 +1,16 @@
-import { FlatList, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, FlatList, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { listDsDetail } from '../../Api/apiAsm'
 import { useRoute } from '@react-navigation/native'
+import { useDispatch } from 'react-redux'
+import { addToCart } from '../../redux/cartSlice'
 
 const ProductDetail = ({ navigation }) => {
     const [productDetail, setProductDetail] = useState([])
     const [selected, setSelected] = useState(0)
     const router = useRoute();
     const { idProduct } = router.params;
-
+    const dispatch = useDispatch();
     const handleCong = () => {
         setSelected(prev => prev + 1)
     }
@@ -16,6 +18,19 @@ const ProductDetail = ({ navigation }) => {
         if (selected > 0) {
             setSelected(prev => prev - 1)
         }
+    }
+    const handleAddtoCar = () => {
+        productDetail.forEach(item => {
+            const product = {
+                id: item._id,
+                name: item.name,
+                price: item.price,
+                quantity: selected,
+                image: item.image,
+            };
+            dispatch(addToCart(product));
+        });
+        Alert.alert('Thông báo', 'Đã thêm vào giỏ hàng thành công')
     }
     const formatPrice = (price) => {
         return new Intl.NumberFormat('vi-VN').format(price);
@@ -135,7 +150,10 @@ const ProductDetail = ({ navigation }) => {
                         <Text style={{ fontSize: 24, fontWeight: '500', lineHeight: 34, color: '#221F1F' }}>{formatPrice(250000 * selected)}đ</Text>
                     </View>
                 </View>
-                <TouchableOpacity style={[styles.purchaseButton, selected == 0 && styles.purchaseButton1]} disabled={selected == 0}>
+                <TouchableOpacity
+                    style={[styles.purchaseButton, selected == 0 && styles.purchaseButton1]}
+                    disabled={selected == 0}
+                    onPress={handleAddtoCar}>
                     <Text style={styles.purchaseText}>CHỌN MUA</Text>
                 </TouchableOpacity>
             </View>
